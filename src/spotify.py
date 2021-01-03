@@ -51,10 +51,15 @@ def ucitaj_pesme():
             vreme = "{:02d}:{:02d}".format(minute, sekunde)
 
             # upisi u fajl pesmu prema sledecem formatu:
-            # ime - autor - album - duzina
-            # todo: moguca greska pri citanju fajla ako ime/autor/album sadrze
-            # "-" karakter
-            f.write(ime + " - " + autor + " - " + album + " - " + vreme + "\n")
+            # ime
+            # autor
+            # album
+            # vreme
+            # prazan red
+            # sve je u novom redu zbog lakseg ucitavanja, ako bi se koristio
+            # neki separator (kao "-") moglo bi doci do greske pri ucitavanju
+            # ako bi ime/autor/album sadrzali taj karakter
+            f.write(ime + "\n" + autor + "\n" + album + "\n" + vreme + "\n\n")
 
             broj_pesama += 1
 
@@ -66,4 +71,5 @@ def ucitaj_pesme():
     stop_vreme = time.time()
 
     t = stop_vreme - start_vreme
-    print(str(broj_pesama) + " pesama ucitano za " + str(round(t, 2)) + " sekundi")
+    print(str(broj_pesama) + " pesama ucitano za " + str(round(t, 2)) +
+            " sekundi")
