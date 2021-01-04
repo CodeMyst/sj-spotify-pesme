@@ -1,5 +1,6 @@
 import spotipy
 import time
+from pesma import Pesma
 from spotipy.oauth2 import SpotifyOAuth
 
 # limit koliko pesama moze API da uzme iz jednog zahteva,
@@ -15,6 +16,7 @@ sp = spotipy.Spotify(auth_manager=SpotifyOAuth(
 
 # ucitava sve pesme is korisnikove "Liked Songs" playliste,
 # i cuva ih u fajl pesme.txt
+# vraca listu svih pesama
 def ucitaj_pesme():
     print("ucitavanje pesama iz spotify-a...")
 
@@ -25,7 +27,8 @@ def ucitaj_pesme():
 
     # trenutni broj zahtevne strane
     broj_strane = 0
-    broj_pesama = 0
+
+    pesme = []
 
     rez = sp.current_user_saved_tracks(LIMIT, broj_strane * LIMIT)
 
@@ -39,29 +42,17 @@ def ucitaj_pesme():
             # duzina pesme u ms
             duz = pesma["duration_ms"]
 
-            # pretvori duzinu iz ms u minute:sekunde
-            sekunde = int((duz/1000)%60)
-            minute = int((duz/(1000*60))%60)
-
             ime = pesma["name"]
             # pesma moze imati vise autora, uzmi samo prvog
             autor = pesma["artists"][0]["name"]
             album = pesma["album"]["name"]
-            # formatiraj vreme u 00:00 format
-            vreme = "{:02d}:{:02d}".format(minute, sekunde)
+            godina = pesma["album"]["release_date"][:4]
 
-            # upisi u fajl pesmu prema sledecem formatu:
-            # ime
-            # autor
-            # album
-            # vreme
-            # prazan red
-            # sve je u novom redu zbog lakseg ucitavanja, ako bi se koristio
-            # neki separator (kao "-") moglo bi doci do greske pri ucitavanju
-            # ako bi ime/autor/album sadrzali taj karakter
-            f.write(ime + "\n" + autor + "\n" + album + "\n" + vreme + "\n\n")
+            p = Pesma(ime, autor, album, godina, duz)
 
-            broj_pesama += 1
+            f.write(p.toLongString())
+
+            pesme.append(p)
 
         broj_strane += 1
         rez = sp.current_user_saved_tracks(LIMIT, broj_strane * LIMIT)
@@ -71,5 +62,7 @@ def ucitaj_pesme():
     stop_vreme = time.time()
 
     t = stop_vreme - start_vreme
-    print(str(broj_pesama) + " pesama ucitano za " + str(round(t, 2)) +
+    print(str(len(pesme)) + " pesama ucitano za " + str(round(t, 2)) +
             " sekundi")
+
+    return pesme
