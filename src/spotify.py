@@ -62,8 +62,7 @@ def ucitaj_pesme(playlista):
             # pesma moze imati vise autora, uzmi samo prvog
             autor = pesma["artists"][0]["name"]
             album = pesma["album"]["name"]
-            # godina = pesma["album"]["release_date"][:4]
-            godina = "2021"
+            godina = pesma["album"]["release_date"][:4]
 
             p = Pesma(ime, autor, album, godina, duz)
 
