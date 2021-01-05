@@ -1,3 +1,14 @@
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKCYAN = '\033[96m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+
 class Pesma:
     # duzina je u ms
     def __init__(self, ime, autor, album, godina, duzina):
@@ -44,5 +55,5 @@ class Pesma:
         if len(album) > 27:
             album = album[:27] + "..."
 
-        return "|  {:<40}  |   {:<30}   |   {:<30}   |  {:<4}  |  {:<5}  |" \
+        return ("│  " + bcolors.OKBLUE + bcolors.BOLD + "{:<40}" + bcolors.ENDC + "  │   " + bcolors.OKBLUE + "{:<30}" + bcolors.ENDC + "   │   " + bcolors.OKBLUE + "{:<30}" + bcolors.ENDC + "   │  " + bcolors.FAIL + "{:<4}" + bcolors.ENDC + "  │  " + bcolors.FAIL + "{:<5}" + bcolors.ENDC + "  │") \
             .format(ime, autor, album, self.godina, vreme)

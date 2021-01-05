@@ -1,6 +1,7 @@
 import spotipy
 import time
 from pesma import Pesma
+from playlista import Playlista
 from spotipy.oauth2 import SpotifyOAuth
 
 # limit koliko pesama moze API da uzme iz jednog zahteva,
@@ -14,11 +15,22 @@ sp = spotipy.Spotify(auth_manager=SpotifyOAuth(
     redirect_uri="http://localhost:5000/spotify-callback",
     scope="user-library-read"))
 
-# ucitava sve pesme is korisnikove "Liked Songs" playliste,
+# ucitava sve playliste sa profila i vraca listu kao tuple (broj_playliste, ime_playliste)
+def ucitaj_playliste():
+    p = sp.current_user_playlists(limit=50)
+
+    rez = [Playlista("0", "Liked Songs")]
+
+    for i, item in enumerate(p["items"]):
+        rez.append(Playlista(item["id"], item["name"]))
+
+    return rez
+
+# ucitava sve pesme iz izabranje playliste
 # i cuva ih u fajl pesme.txt
 # vraca listu svih pesama
-def ucitaj_pesme():
-    print("ucitavanje pesama iz spotify-a...")
+def ucitaj_pesme(playlista):
+    print("\nucitavanje pesama iz spotify-a iz playliste " + playlista.ime + "...")
 
     start_vreme = time.time()
 
@@ -30,7 +42,11 @@ def ucitaj_pesme():
 
     pesme = []
 
-    rez = sp.current_user_saved_tracks(LIMIT, broj_strane * LIMIT)
+    # ako je id liste 0, onda uzimamo "liked songs"
+    if playlista.idp == "0":
+        rez = sp.current_user_saved_tracks(LIMIT, broj_strane * LIMIT)
+    else:
+        rez = sp.playlist_items(playlista.idp, fields="items(track(duration_ms,name,artists(name),album(name,release_date)))", limit=LIMIT, offset=broj_strane * LIMIT, additional_types=["track"])
 
     # dok god trenutna strana ima pesama, uzmi sve pesme sa strane
     # i ispisi ih u fajl
@@ -46,7 +62,8 @@ def ucitaj_pesme():
             # pesma moze imati vise autora, uzmi samo prvog
             autor = pesma["artists"][0]["name"]
             album = pesma["album"]["name"]
-            godina = pesma["album"]["release_date"][:4]
+            # godina = pesma["album"]["release_date"][:4]
+            godina = "2021"
 
             p = Pesma(ime, autor, album, godina, duz)
 
@@ -55,7 +72,13 @@ def ucitaj_pesme():
             pesme.append(p)
 
         broj_strane += 1
-        rez = sp.current_user_saved_tracks(LIMIT, broj_strane * LIMIT)
+
+        # ako je id liste 0, onda uzimamo "liked songs"
+        # uzimanje sledece strane
+        if playlista.idp == "0":
+            rez = sp.current_user_saved_tracks(LIMIT, broj_strane * LIMIT)
+        else:
+            rez = sp.playlist_items(playlista.idp, fields="items(track(duration_ms,name,artists(name),album(name,release_date)))", limit=LIMIT, offset=broj_strane * LIMIT, additional_types=["track"])
 
     f.close()
 
@@ -63,6 +86,6 @@ def ucitaj_pesme():
 
     t = stop_vreme - start_vreme
     print(str(len(pesme)) + " pesama ucitano za " + str(round(t, 2)) +
-            " sekundi")
+            " sekundi\n")
 
     return pesme
