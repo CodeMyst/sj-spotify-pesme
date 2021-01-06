@@ -27,15 +27,11 @@ def ucitaj_playliste():
     return rez
 
 # ucitava sve pesme iz izabranje playliste
-# i cuva ih u fajl pesme.txt
-# vraca listu svih pesama
+# i vraca listu svih pesama
 def ucitaj_pesme(playlista):
     print("\nucitavanje pesama iz spotify-a iz playliste " + playlista.ime + "...")
 
     start_vreme = time.time()
-
-    # otvori fajl za append
-    f = open("pesme.txt", "a")
 
     # trenutni broj zahtevne strane
     broj_strane = 0
@@ -66,8 +62,6 @@ def ucitaj_pesme(playlista):
 
             p = Pesma(ime, autor, album, godina, duz)
 
-            f.write(p.toLongString())
-
             pesme.append(p)
 
         broj_strane += 1
@@ -78,8 +72,6 @@ def ucitaj_pesme(playlista):
             rez = sp.current_user_saved_tracks(LIMIT, broj_strane * LIMIT)
         else:
             rez = sp.playlist_items(playlista.idp, fields="items(track(duration_ms,name,artists(name),album(name,release_date)))", limit=LIMIT, offset=broj_strane * LIMIT, additional_types=["track"])
-
-    f.close()
 
     stop_vreme = time.time()
 
