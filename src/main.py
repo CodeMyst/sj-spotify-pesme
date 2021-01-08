@@ -2,6 +2,7 @@ import os
 import spotify
 import tabele
 from playlista import Playlista
+import matplotlib.pyplot as plt
 
 playliste = []
 izabrana_playlista = None
@@ -98,6 +99,80 @@ def sortiranje():
     tabele.ispisi([40, 30, 30, 4, 5], pesme_tabela)
 
 def statistike():
+    print()
+    
+    stats = [("0", "broj pesama po godini"), ("1", "broj pesama po duzini"), ("2", "broj autora po zanru")]
+
+    tabele.ispisi([2, 30], stats)
+
+    print()
+
+    stat = input("izaberi statistiku (default=0): ")
+
+    if not stat.isnumeric() or int(stat) > 2:
+        stat = "0"
+    
+    if stat == "0":
+        godine = dict()
+        x = []
+        y = []
+
+        for p in pesme:
+            god = int(p.godina)
+            if godine.get(god) is None:
+                godine[god] = 1
+            else:
+                godine[god] += 1
+
+        sort_godine = sorted(godine.items())
+
+        for god, br in sort_godine:
+            # pretvaranje godine u string, da matplotlib ne bi dodavao brojeve izmedju godina
+            x.append(str(god))
+            y.append(br)
+
+        plt.bar(x, y)
+        plt.xlabel("godina")
+        plt.ylabel("broj pesama")
+        plt.xticks(rotation=90)
+        plt.show()
+    elif stat == "1":
+        duzine = {"<1": 0, "1 - 2": 0, "2 - 3": 0, "3 - 4": 0, "4 - 5": 0, "5 - 6": 0, "6 - 7": 0, "7+": 0}
+        x = []
+        y = []
+
+        for p in pesme:
+            d = p.duzina
+            rez = ""
+
+            if d < 1 * 60000:
+                rez = "<1"
+            elif d >= 1 * 60000 and d < 2 * 60000:
+                rez = "1 - 2"
+            elif d >= 2 * 60000 and d < 3 * 60000:
+                rez = "2 - 3"
+            elif d >= 3 * 60000 and d < 4 * 60000:
+                rez = "3 - 4"
+            elif d >= 4 * 60000 and d < 5 * 60000:
+                rez = "4 - 5"
+            elif d >= 5 * 60000 and d < 6 * 60000:
+                rez = "5 - 6"
+            elif d >= 6 * 60000 and d < 7 * 60000:
+                rez = "6 - 7"
+            else:
+                rez = "7+"
+
+            duzine[rez] += 1
+
+        for i in duzine:
+            x.append(i)
+            y.append(duzine[i])
+
+        plt.bar(x, y)
+        plt.xlabel("duzina (u minutima)")
+        plt.ylabel("broj pesama")
+        plt.show()
+
     return
 
 def clear():
