@@ -68,9 +68,12 @@ def ucitaj_playlistu_spotify():
     pesme = spotify.ucitaj_pesme(playliste[int(pi)])
 
 def ucitaj_playlistu_fajl():
-    # todo: provera da li fajl postoji
-
     print()
+
+    if not os.path.exists(PESME_F):
+        print("fajl pesme.txt ne postoji, playlista se mora ucitati sa spotify-a")
+        ucitaj_playlistu_spotify()
+        return
 
     p = []
 
