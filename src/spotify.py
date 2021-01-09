@@ -46,7 +46,9 @@ def ucitaj_pesme(playlista):
     if playlista.idp == "0":
         rez = sp.current_user_saved_tracks(LIMIT, broj_strane * LIMIT)
     else:
-        rez = sp.playlist_items(playlista.idp, fields="items(track(duration_ms,name,artists(name),album(name,release_date)))", limit=LIMIT, offset=broj_strane * LIMIT, additional_types=["track"])
+        rez = sp.playlist_items(playlista.idp,
+                fields="items(track(duration_ms,name,artists(name),album(name,release_date)))", 
+                limit=LIMIT, offset=broj_strane * LIMIT, additional_types=["track"])
 
     # dok god trenutna strana ima pesama, uzmi sve pesme sa strane
     # i ispisi ih u fajl
@@ -75,7 +77,9 @@ def ucitaj_pesme(playlista):
         if playlista.idp == "0":
             rez = sp.current_user_saved_tracks(LIMIT, broj_strane * LIMIT)
         else:
-            rez = sp.playlist_items(playlista.idp, fields="items(track(duration_ms,name,artists(name),album(name,release_date)))", limit=LIMIT, offset=broj_strane * LIMIT, additional_types=["track"])
+            rez = sp.playlist_items(playlista.idp,
+                    fields="items(track(duration_ms,name,artists(name),album(name,release_date)))",
+                    limit=LIMIT, offset=broj_strane * LIMIT, additional_types=["track"])
 
     stop_vreme = time.time()
 

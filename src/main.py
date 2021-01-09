@@ -104,7 +104,8 @@ def ucitaj_playlistu_fajl():
     pesme = p
 
 def opcije():
-    opcije = [("0", "izlaz"), ("1", "sortiraj playlistu"), ("2", "prikazi statistike"), ("3", "sacuvaj playlistu u fajl")]
+    opcije = [("0", "izlaz"), ("1", "sortiraj playlistu"), ("2", "prikazi statistike"),
+              ("3", "sacuvaj playlistu u fajl")]
 
     tabele.ispisi([2, 30], opcije)
 
