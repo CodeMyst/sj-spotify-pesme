@@ -2,7 +2,10 @@ import os
 import spotify
 import tabele
 from playlista import Playlista
+from pesma import Pesma
 import matplotlib.pyplot as plt
+
+PESME_F = "pesme.txt"
 
 playliste = []
 izabrana_playlista = None
@@ -11,10 +14,31 @@ pesme = []
 def main():
     clear()
 
-    # todo: obrisi ovu liniju, samo za testiranje
-    # todo: ako su pesme vec ucitane, prvo pitaj da li opet da ucita
-    if os.path.exists("pesme.txt"):
-        os.remove("pesme.txt")
+    ucitaj_playlistu()
+
+    opcije()
+
+def ucitaj_playlistu():
+    print()
+    print("ucitaj playlistu: ")
+    opcije = [("0", "sa spotify profila"), ("1", "iz fajla pesme.txt")]
+
+    tabele.ispisi([2, 30], opcije)
+
+    print()
+
+    opcija = input("izaberi opciju (default=0): ")
+
+    if not opcija.isnumeric() or int(opcija) > len(opcije)-1:
+        opcija = "0"
+
+    if opcija == "0":
+        ucitaj_playlistu_spotify()
+    elif opcija == "1":
+        ucitaj_playlistu_fajl()
+
+def ucitaj_playlistu_spotify():
+    print()
 
     global playliste
     playliste = spotify.ucitaj_playliste()
@@ -42,10 +66,41 @@ def main():
     global pesme
     pesme = spotify.ucitaj_pesme(playliste[int(pi)])
 
-    opcije()
+def ucitaj_playlistu_fajl():
+    # todo: provera da li fajl postoji
+
+    print()
+
+    p = []
+
+    with open(PESME_F, "r") as f:
+        pid = next(f).strip()
+        pime = next(f).strip()
+
+        global izabrana_playlista
+        izabrana_playlista = Playlista(pid, pime)
+
+        next(f)
+
+        while True:
+            try:
+                ime = next(f).strip()
+                autor = next(f).strip()
+                album = next(f).strip()
+                godina = next(f).strip()
+                duzina = int(next(f).strip())
+
+                p.append(Pesma(ime, autor, album, godina, duzina))
+            except:
+                break
+
+    print(str(len(p)) + " pesama ucitano\n")
+
+    global pesme
+    pesme = p
 
 def opcije():
-    opcije = [("0", "izlaz"), ("1", "sortiraj playlistu"), ("2", "prikazi statistike")]
+    opcije = [("0", "izlaz"), ("1", "sortiraj playlistu"), ("2", "prikazi statistike"), ("3", "sacuvaj playlistu u fajl")]
 
     tabele.ispisi([2, 30], opcije)
 
@@ -53,7 +108,7 @@ def opcije():
 
     opcija = input("izaberi opciju (default=0): ")
 
-    if not opcija.isnumeric() or int(opcija) > 2:
+    if not opcija.isnumeric() or int(opcija) > len(opcije)-1:
         opcija = "0"
 
     if opcija == "0":
@@ -62,6 +117,8 @@ def opcije():
         sortiranje()
     elif opcija == "2":
         statistike()
+    elif opcija == "3":
+        sacuvaj()
 
 def sortiranje():
     print()
@@ -74,7 +131,7 @@ def sortiranje():
 
     kolona = input("izaberi kolonu po kojoj da se sortira (default=0): ")
 
-    if not kolona.isnumeric() or int(kolona) > 4:
+    if not kolona.isnumeric() or int(kolona) > len(kolone)-1:
         kolona = "0"
 
     if kolona == "0":
@@ -101,7 +158,7 @@ def sortiranje():
 def statistike():
     print()
     
-    stats = [("0", "broj pesama po godini"), ("1", "broj pesama po duzini"), ("2", "broj autora po zanru")]
+    stats = [("0", "broj pesama po godini"), ("1", "broj pesama po duzini")]
 
     tabele.ispisi([2, 30], stats)
 
@@ -109,7 +166,7 @@ def statistike():
 
     stat = input("izaberi statistiku (default=0): ")
 
-    if not stat.isnumeric() or int(stat) > 2:
+    if not stat.isnumeric() or int(stat) > len(stats)-1:
         stat = "0"
     
     if stat == "0":
@@ -169,11 +226,23 @@ def statistike():
             y.append(duzine[i])
 
         plt.bar(x, y)
-        plt.xlabel("duzina (u minutima)")
+        plt.xlabel("duzina")
         plt.ylabel("broj pesama")
         plt.show()
 
     return
+
+def sacuvaj():
+    if os.path.exists(PESME_F):
+        os.remove(PESME_F)
+
+    f = open(PESME_F, "a")
+    
+    f.write(izabrana_playlista.idp + "\n")
+    f.write(izabrana_playlista.ime + "\n\n")
+
+    for p in pesme:
+        f.write(p.toLongString())
 
 def clear():
     if os.name == "nt":

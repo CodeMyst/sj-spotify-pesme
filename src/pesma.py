@@ -19,10 +19,9 @@ class Pesma:
     # autor
     # album
     # vreme
-    # prazan red
     # sve je u novom redu zbog lakseg ucitavanja, ako bi se koristio
     # neki separator (kao "-") moglo bi doci do greske pri ucitavanju
     # ako bi ime/autor/album sadrzali taj karakter
     def toLongString(self):
         return self.ime + "\n" + self.autor + "\n" + self.album + "\n" + \
-            self.godina + "\n" + str(self.duzina) + "\n\n"
+            self.godina + "\n" + str(self.duzina) + "\n"
