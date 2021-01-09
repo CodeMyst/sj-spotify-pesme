@@ -16,7 +16,8 @@ def main():
 
     ucitaj_playlistu()
 
-    opcije()
+    while True:
+        opcije()
 
 def ucitaj_playlistu():
     print()
