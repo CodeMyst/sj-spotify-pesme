@@ -1,5 +1,6 @@
 import spotipy
 import time
+import configparser
 from pesma import Pesma
 from playlista import Playlista
 from spotipy.oauth2 import SpotifyOAuth
@@ -8,10 +9,13 @@ from spotipy.oauth2 import SpotifyOAuth
 # pomocu "paging"-a, se preko vise zahteva uzimaju sve pesme
 LIMIT = 20
 
-# todo: ucitaj client_id i client_secret iz configa
+# config za ucitavanje spotify id i secret
+config = configparser.ConfigParser()
+config.read("config.ini")
+
 sp = spotipy.Spotify(auth_manager=SpotifyOAuth(
-    client_id="f342b5e0b3704ee5bd7263ab93af4aa8",
-    client_secret="4d0abacfce5f481cad3418393b533b8e",
+    client_id=config["spotify"]["client_id"],
+    client_secret=config["spotify"]["client_secret"],
     redirect_uri="http://localhost:5000/spotify-callback",
     scope="user-library-read"))
 
