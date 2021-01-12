@@ -4,4 +4,6 @@ potrebno je kreirati spotify aplikaciju i uzeti client id i client secret i stav
 
 potrebno je imati instalirani `pip` za `pipenv` i za pakete (spotify i matplotlib)
 
+da se instaliraju paketi pokrenuti `pipenv install`
+
 da se pokrene program, prvo treba uci u pipenv shell sa komandom `pipenv shell` i posle pokrenuti program sa `python src/main.py`
